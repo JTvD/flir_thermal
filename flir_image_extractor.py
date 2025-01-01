@@ -6,6 +6,7 @@ import io
 import json
 import re
 import csv
+import cv2
 import subprocess
 import numpy as np
 from PIL import Image
@@ -100,6 +101,16 @@ class FlirImageExtractor:
         :return:
         """
         return self.thermal_image_np
+
+    def get_thermal_false_color(self):
+        """
+        Return the last extracted thermal image in false color
+        Pillow has no colormaps, therefore OpenCV is used
+        :return:
+        """
+        thermal_image_8bit = cv2.normalize(self.thermal_image_np, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+        thermal_colored = cv2.applyColorMap(thermal_image_8bit, cv2.COLORMAP_HOT)
+        return thermal_colored
 
     def extract_embedded_image(self):
         """
